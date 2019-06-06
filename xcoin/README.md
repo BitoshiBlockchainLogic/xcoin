@@ -1,5 +1,5 @@
 # xcoin goals
-Smart Contracts 
+matching smartSmart Contract 
 Blockchain
 mass adoption
 PR
