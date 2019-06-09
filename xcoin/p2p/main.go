@@ -178,15 +178,15 @@ func writeData(rw *bufio.ReadWriter) {
 		}
 
 		sendData = strings.Replace(sendData, "\n", "", -1)
-		bpm, err := sendData, err
+		genesisKey, err := sendData, err
 		if err != nil {
 			log.Fatal(err)
 		}
-		newBlock := generateBlock(Coinchain[len(Coinchain)-1], bpm)
+		newCoin := generateCoin(Coinchain[len(Coinchain)-1], genesisKey)
 
-		if isBlockValid(newBlock, Coinchain[len(Coinchain)-1]) {
+		if isBlockValid(newCoin, Coinchain[len(Coinchain)-1]) {
 			mutex.Lock()
-			Coinchain = append(Coinchain, newBlock)
+			Coinchain = append(Coinchain, newCoin)
 			mutex.Unlock()
 		}
 
@@ -207,10 +207,11 @@ func writeData(rw *bufio.ReadWriter) {
 
 func main() {
 	t := time.Now()
-	genesisBlock := Coin{}
-	genesisBlock = Coin{0, t.String(), "", calculateHash(genesisBlock), ""}
 
-	Coinchain = append(Coinchain, genesisBlock)
+	genesisCoin := Coin{}
+	genesisCoin = Coin{0, t.String(), "", calculateHash(genesisCoin), ""}
+
+	Coinchain = append(Coinchain, genesisCoin)
 
 	// LibP2P code uses golog to log messages. They log with different
 	// string IDs (i.e. "swarm"). We can control the verbosity level for
@@ -292,17 +293,17 @@ func main() {
 	}
 }
 
-// make sure block is valid by checking index, and comparing the hash of the previous block
-func isBlockValid(newBlock, oldBlock Coin) bool {
-	if oldBlock.Index+1 != newBlock.Index {
+// make sure coin is valid by checking index, and comparing the hash of the previous coin
+func isBlockValid(newCoin, oldCoin Coin) bool {
+	if oldCoin.Index+1 != newCoin.Index {
 		return false
 	}
 
-	if oldBlock.Hash != newBlock.PrevHash {
+	if oldCoin.Hash != newCoin.PrevHash {
 		return false
 	}
 
-	if calculateHash(newBlock) != newBlock.Hash {
+	if calculateHash(newCoin) != newCoin.Hash {
 		return false
 	}
 
@@ -310,26 +311,26 @@ func isBlockValid(newBlock, oldBlock Coin) bool {
 }
 
 // SHA256 hashing
-func calculateHash(block Coin) string {
-	record := strconv.Itoa(block.Index) + block.Timestamp + block.genesisKey + block.PrevHash
+func calculateHash(coin Coin) string {
+	record := strconv.Itoa(coin.Index) + coin.Timestamp + coin.genesisKey + coin.PrevHash
 	h := sha256.New()
 	h.Write([]byte(record))
 	hashed := h.Sum(nil)
 	return hex.EncodeToString(hashed)
 }
 
-// create a new block using previous block's hash
-func generateBlock(oldBlock Coin, genesisKey string) Coin {
+// create a new coin using previous coin's hash
+func generateCoin(oldCoin Coin, genesisKey string) Coin {
 
-	var newBlock Coin
+	var newCoin Coin
 
 	t := time.Now()
 
-	newBlock.Index = oldBlock.Index + 1
-	newBlock.Timestamp = t.String()
-	newBlock.genesisKey = genesisKey
-	newBlock.PrevHash = oldBlock.Hash
-	newBlock.Hash = calculateHash(newBlock)
+	newCoin.Index = oldCoin.Index + 1
+	newCoin.Timestamp = t.String()
+	newCoin.genesisKey = genesisKey
+	newCoin.PrevHash = oldCoin.Hash
+	newCoin.Hash = calculateHash(newCoin)
 
-	return newBlock
+	return newCoin
 }
