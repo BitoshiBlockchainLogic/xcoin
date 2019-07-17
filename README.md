@@ -1,5 +1,5 @@
 # xcoin
-The Bit as in bits and Bytes of the coin are now free to roam our pockets. lol  
+The Bit as in bits and Bytes of the coin are now free to roam our pockets. 
 
 
 Coin = Genesis Key From transferring block chain ex ETH or BTC signed to user pubkey which creates coins key pair in coin gen app with users keys. X Chain gets coin (gen & pubkey) from coin app that gets gen key from sending blockchhain. tranfering blockchains coins are locked in smart contracts for exchange.
